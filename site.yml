@@ -17,45 +17,15 @@
       update_cache: yes 
     when: ansible_distribution == "Ubuntu"
 
-
-- hosts: all
-  become: true
-  tasks:
-
-  - name: create simone user
-    tags: always
-    user:
-      name: simone
-      groups: root
-
-  - name: add ssh key to simone
-    tags: always
-    authorized_key:
-      user: simone
-      key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDFjwSyj7ylJhHOFPHb6LE7hPP2JyYAWHF27iW9Ssj8s ansible"
-
-  - name: add sudoers fine for simone
-    tags: always
-    copy:
-      src: sudoer_simone
-      dest: /etc/sudoers.d/simone
-      owner: root
-      group: root
-      mode: 0440
-
- 
-
 - hosts: workstations
   become: true
   tasks:
   - name: installing unzip
-    tags: teraform,unzip
     package: 
      name: unzip
 
   - name: installing teraform
-    tags: unzip,terraform
-    unarchive:    
+    unarchive:
       src: https://releases.hashicorp.com/terraform/1.1.2/terraform_1.1.2_linux_amd64.zip
       dest: /usr/local/bin
       remote_src: yes
@@ -88,14 +58,6 @@
       state: latest
     when: ansible_distribution == "CentOS"
 
-  - name: start httpd (CentOS)
-    tags: apache,centos,httpd
-    service:
-     name: httpd
-     state: started
-    when: ansible_distribution == "CentOS"
-
-
   - name: copy default html file for site
     tags: apache,apache2,httpd
     copy:
@@ -104,11 +66,6 @@
      owner: root
      group: root
      mode: 0644 
-
-
-
-
-
 
 - hosts: db_servers
   become: true

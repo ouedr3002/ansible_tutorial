@@ -1,0 +1,65 @@
+---
+- hosts: all
+  become: true
+  pre_tasks:
+  
+  - name: update repo cached (CentOS)
+    tags: always
+    dnf:
+      update_cache: yes
+    changed_when: false
+    when: ansible_distribution == "CentOS"
+
+  - name: update repo cached  (Ubuntu) 
+    tags: always
+    apt:
+      update_cache: yes
+    changed_when: false 
+    when: ansible_distribution == "Ubuntu"
+
+
+  - name: install apache and php for Ubuntu servers
+    tags: apache,apache2,ubuntu
+    apt:
+      name:
+         - apache2
+         - libapache2-mod-php
+      state: latest
+    when: ansible_distribution == "Ubuntu"
+
+  - name: install apache and php for CentOS servers
+    tags: apache,centos,httpd
+    dnf:
+      name:
+         - httpd
+         - php
+      state: latest
+    when: ansible_distribution == "CentOS" 
+
+
+
+  - name: start httpd (CentOS)
+    tags: apache,centos,httpd
+    service:
+      name: httpd
+      state: started
+    when: ansible_distribution == "CentOS"
+
+
+  - name: copy default html file for site
+    tags: apache,apache2,httpd
+    copy:
+     src: default_site.html
+     dest: /var/www/html/index.html
+     owner: root
+     group: root
+     mode: 0644
+
+
+  - name: add ssh key for user poko
+    tags: always
+    authorized_key:
+     user: poko
+     key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDFjwSyj7ylJhHOFPHb6LE7hPP2JyYAWHF27iW9Ssj8s ansible"
+
+

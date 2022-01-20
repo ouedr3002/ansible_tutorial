@@ -1,0 +1,15 @@
+---
+- hosts: all
+  become: yes
+  gather_facts: no
+  tasks:
+   - name: Apache latest version installation
+     dnf:
+      name: httpd
+      state: latest
+
+   - name: Enable service to start on boot up
+     service:
+      name: httpd
+      state: started
+     when: ansible_distribution == "CentOS"

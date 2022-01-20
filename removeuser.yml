@@ -1,0 +1,10 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: ansible delete user
+      user:
+        name: simone
+        state: "absent"
+        remove: yes
+        force: yes

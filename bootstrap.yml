@@ -1,0 +1,40 @@
+---
+- hosts: all
+  become: true
+  pre_tasks:
+  
+  - name: install updates (CentOS)
+    tags: always
+    dnf:
+      update_only: yes
+      update_cache: yes
+    when: ansible_distribution == "CentOS"
+
+  - name: install updates (Ubuntu) 
+    tags: always
+    apt:
+      upgrade: dist
+      update_cache: yes 
+    when: ansible_distribution == "Ubuntu"
+
+  - name: create  user poko 
+    tags: always
+    user:
+     name: poko
+     groups: root
+  
+  - name: add ssh key for user poko
+    tags: always
+    authorized_key:
+     user: poko
+     key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDFjwSyj7ylJhHOFPHb6LE7hPP2JyYAWHF27iW9Ssj8s ansible"
+
+
+  - name: add sudoers file for poko
+    tags: always
+    copy:
+     src: sudoer_poko
+     dest: /etc/sudoers.d/poko
+     owner: root
+     group: root
+     mode: 0440
