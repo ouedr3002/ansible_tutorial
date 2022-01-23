@@ -1,0 +1,4 @@
+- name: add ssh key for poko
+  authorized_key:
+    user: poko
+    key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDFjwSyj7ylJhHOFPHb6LE7hPP2JyYAWHF27iW9Ssj8s ansible"
